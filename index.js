@@ -1,6 +1,7 @@
 const fs  = require('fs');
 const readline = require('readline');
 
+//add try/catch
 const fileStream = fs.createReadStream('logs/input-logs.txt');
 
 let outputDomains = [];
@@ -17,6 +18,12 @@ rl.on('line', (line) =>{
         isOk = line.includes('status: OK') || line.includes('Certificate did not match expected hostname') || line.includes('AM Domains list')
         if (!isOk) {
             let domain = line.slice(line.indexOf('domain:') + 7, line.indexOf('country:') - 2).trim();
+            
+            let isHttps = domain.indexOf("https://")
+            if (isHttps != -1) {
+                domain = domain.slice(8);
+            }
+
             if (blockedDomains.indexOf(domain) == -1) {
                 let provider = line.slice(line.indexOf('country:'), line.indexOf('status:'));
                 outputDomains += i + " " + domain + "          " + provider + "'\n'";
@@ -31,7 +38,7 @@ setTimeout(function(){
         if (err) throw err;
         console.log('The file has been saved!');
       }); 
-}, 10000);
+}, 3000);
 
 
 rl.on('close', () => {
