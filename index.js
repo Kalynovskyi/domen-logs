@@ -15,7 +15,7 @@ const rl = readline.createInterface({
 
 rl.on('line', (line) =>{
     if (line !== "") {
-        isOk = line.includes('status: OK') || line.includes('Certificate did not match expected hostname') || line.includes('AM Domains list')
+        isOk = line.includes('status: OK') || line.includes('Certificate did not match expected hostname') || line.includes('AM Domains list') || line.includes('PM Domains list')
         if (!isOk) {
             let domain = line.slice(line.indexOf('domain:') + 7, line.indexOf('country:') - 2).trim();
             
@@ -26,7 +26,7 @@ rl.on('line', (line) =>{
 
             if (blockedDomains.indexOf(domain) == -1) {
                 let provider = line.slice(line.indexOf('country:'), line.indexOf('status:'));
-                outputDomains += i + " " + domain + "          " + provider + "'\n'";
+                outputDomains += provider + "            " + domain + "'\n'";
                 i = i + 1;
             }
         }
@@ -34,6 +34,9 @@ rl.on('line', (line) =>{
 });
 
 setTimeout(function(){
+    outputDomains = outputDomains.split('\n').sort().join('\n')
+    outputDomains += "'\n'" + "Total domains: " + i;
+
     fs.writeFile('logs/output-logs.txt', outputDomains, (err) => {
         if (err) throw err;
         console.log('The file has been saved!');
@@ -44,3 +47,7 @@ setTimeout(function(){
 rl.on('close', () => {
     console.log('Finished reading the file');
 });
+
+
+
+//make it as browser page with links; Add sorting by provider
