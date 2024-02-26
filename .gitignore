@@ -1,3 +1,4 @@
 .DS_Store
 logs/input-logs.txt
 logs/output-logs.txt
+logs/output-logs.html

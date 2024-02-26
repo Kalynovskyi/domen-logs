@@ -18,15 +18,19 @@ rl.on('line', (line) =>{
         isOk = line.includes('status: OK') || line.includes('Certificate did not match expected hostname') || line.includes('AM Domains list') || line.includes('PM Domains list')
         if (!isOk) {
             let domain = line.slice(line.indexOf('domain:') + 7, line.indexOf('country:') - 2).trim();
-            
+            let domainLink = '';
             let isHttps = domain.indexOf("https://")
             if (isHttps != -1) {
                 domain = domain.slice(8);
             }
 
+            domainLink = `<a href='http://${domain}'>${domain}</a> <br>`;
+
+            console.log(domainLink);
+
             if (blockedDomains.indexOf(domain) == -1) {
                 let provider = line.slice(line.indexOf('country:'), line.indexOf('status:'));
-                outputDomains += provider + "            " + domain + "'\n'";
+                outputDomains += provider + "            " + domainLink + "'\n'";
                 i = i + 1;
             }
         }
@@ -34,10 +38,11 @@ rl.on('line', (line) =>{
 });
 
 setTimeout(function(){
+    //console.log(outputDomains);
     outputDomains = outputDomains.split('\n').sort().join('\n')
     outputDomains += "'\n'" + "Total domains: " + i;
 
-    fs.writeFile('logs/output-logs.txt', outputDomains, (err) => {
+    fs.writeFile('logs/output-logs.html', outputDomains, (err) => {
         if (err) throw err;
         console.log('The file has been saved!');
       }); 
